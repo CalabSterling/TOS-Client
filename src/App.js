@@ -1,22 +1,23 @@
 import React from 'react';
 import './App.css';
 import Auth from './Auth/Auth';
-import styled from 'styled-components';
+//import styled from 'styled-components';
 import Sitebar from './Components/Navbar';
 
-const SiteContainer = styled.div`
-  font-family: 'Times New Roman';
-  height: 100%;
-  display: grid;
-`;
-const UserContainer = styled.div`
-  padding-top: 0%;
-  padding-right: 1%;
 
-  @media (max-width: 1024px) {
-    margin: auto;
-  }
-`;
+// const SiteContainer = styled.div`
+//   font-family: 'Times New Roman';
+//   height: 100%;
+//   display: grid;
+// `;
+// const UserContainer = styled.div`
+//   padding-top: 0%;
+//   padding-right: 1%;
+
+//   @media (max-width: 1024px) {
+//     margin: auto;
+//   }
+// `;
 
 class App extends React.Component {
   constructor(props) {
@@ -59,12 +60,12 @@ class App extends React.Component {
   render() {
     return (
       <div >
-        <SiteContainer>
+        <div>
           {this.state.sessionToken === localStorage.getItem('token') ? <Sitebar token={this.state.sessionToken} clickLogout={this.clearToken} role={this.state.role} /> : <></> }
-          <UserContainer>
+          <div>
             {this.protectedViews()}
-          </UserContainer>
-        </SiteContainer>
+          </div>
+        </div>
       </div>
     );
   }

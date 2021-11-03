@@ -1,5 +1,5 @@
 import React from 'react';
-import { Input, Form, Label } from 'reactstrap';
+import { Input, Form, Label, Button } from 'reactstrap';
 import styled from "styled-components";
 import APIURL from '../Helpers/Environment';
 
@@ -59,20 +59,20 @@ class Login extends React.Component {
 
     render() {
         return (
-            <Container>
+            <div>
                 <Form onSubmit={this.handleSubmit}>
                         <Label htmlFor="username">Username</Label>
-                        <InputFont><Input onChange={(e) => this.setState({username: e.target.value})} name="username" value={this.state.username} placeholder="Username" type="text"/></InputFont>
-                        
+                        <Input onChange={(e) => this.setState({username: e.target.value})} name="username" value={this.state.username} placeholder="Username" type="text"/>
+                        <br />
                         <Label htmlFor="password">Password</Label>
-                        <InputFont><Input onChange={(e) => this.setState({password: e.target.value})} name="password" value={this.state.password} placeholder="Password" type="password"/></InputFont>
-                        
-                        <ButtonContainer type="submit">Login</ButtonContainer>
+                        <Input onChange={(e) => this.setState({password: e.target.value})} name="password" value={this.state.password} placeholder="Password" type="password"/>
+                        <br />
+                        <Button type="submit">Login</Button>
                         <br />
                         <p>Don't have an account? <a href="/create" onClick={this.props.switchToSignup}>Signup</a></p>
     
                 </Form>
-            </Container>
+            </div>
          )
     }
 }

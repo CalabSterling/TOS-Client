@@ -108,27 +108,27 @@ class Auth extends React.Component {
     render() {
         return(
             <div>
-                <Row>
-                    <Column span="3">
-                    <Container>
-                        <TopContainer>
-                            <BackDrop />
-                            <HeaderContainer>
-                                <HeaderText>
-                                    <LogoContainer>Transportation Ordering System</LogoContainer>
+                <div>
+                    <div span="3">
+                    <div>
+                        <div>
+                            <div />
+                            <div>
+                                <div>
+                                    <h3>Transportation Ordering System</h3>
                                     {this.hour >= 4 && this.hour < 12 ? "Good Morning" : this.hour >= 12 && this.hour < 18 ? "Good Afternoon" : "Good Evening"}!
-                                </HeaderText> 
-                                <SmallText>
+                                </div> 
+                                <div>
                                     {this.state.active === "login" ? 'Please Login' : 'Please Signup' }
-                                </SmallText>
-                            </HeaderContainer>
-                        </TopContainer>
-                        <InnerContainer>
+                                </div>
+                            </div>
+                        </div>
+                        <div>
                             {this.state.active === 'login' ? <Login switchToSignup={this.switchToSignup} updateToken={this.props.updateToken} updateID={this.props.updateID} updateRole={this.props.updateRole} /> : <Signup switchToLogin={this.switchToLogin} updateToken={this.props.updateToken} updateID={this.props.updateID} updateRole={this.props.updateRole} />}
-                        </InnerContainer>
-                    </Container>
-                    </Column>
-                </Row>
+                        </div>
+                    </div>
+                    </div>
+                </div>
             </div>
         )
     }

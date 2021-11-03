@@ -1,5 +1,6 @@
 import React from 'react';
 
+
 class Home extends React.Component {
     constructor(props) {
         super(props);
@@ -9,7 +10,7 @@ class Home extends React.Component {
     render() {
         return(
             <div>
-                This is home!
+                this is home
             </div>
         )
     }

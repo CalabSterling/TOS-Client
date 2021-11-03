@@ -1,5 +1,5 @@
 import React from 'react';
-import {Form, Input, Label, } from 'reactstrap';
+import {Form, Input, Label, Button } from 'reactstrap';
 import styled from 'styled-components';
 import APIURL from '../Helpers/Environment';
 
@@ -56,7 +56,7 @@ class Signup extends React.Component {
 
     render(props) {
         return ( 
-            <Container>
+            <div>
             <Form onSubmit={this.handleSubmit}>
                 <Label htmlFor="firstName">First Name</Label>
                 <Input onChange={(e) => this.setState({firstName: e.target.value})} name="firstName" value={this.state.firstName} type="text" placeholder="First Name"/>
@@ -70,11 +70,11 @@ class Signup extends React.Component {
                 <Label htmlFor="password">Password</Label>
                 <Input onChange={(e) => this.setState({password: e.target.value})} name="password" value={this.state.password} type="password" placeholder="Password" pattern="[A-Za-z]{8}" required title="8 characters minimum"/>
                 <br />
-                <ButtonContainer type="submit" >Signup</ButtonContainer>
+                <Button type="submit" >Signup</Button>
                 <br />
-                <MemberP>Already a member? <a href="/login" onClick={this.props.switchToLogin}>Login</a></MemberP>
+                <div>Already a member? <a href="/login" onClick={this.props.switchToLogin}>Login</a></div>
             </Form>
-            </Container>
+            </div>
          );
     }
 }

@@ -1,24 +1,23 @@
 import React, { Component } from 'react';
-import { Button, Form, Label, Input, ModalHeader, ModalBody } from 'reactstrap';
-import Modal from '../../Modal';
-import CustomerSearch from './CustomerSearch';
+import { Button, ModalHeader, ModalBody, Label, Input, Form } from 'reactstrap';
+import Modal from '../../Modal'
 
 import URL from '../../Helpers/Environment';
 
-class Customer extends Component {
+class CustomerSearch extends Component {
     constructor(props) {
         super(props);
         this.state = { 
-            customerToUpdate: [], 
-            show: false,
+            customerData: [], 
+            show: false,  
+            customer: [],
             name: '',
             contact1: '',
             contact2: '',
             email1: '',
-            email2: '',
-         }
-         this.showModal = this.showModal.bind(this);
-         this.hideModal = this.hideModal.bind(this);
+            email2: '', }
+        this.showModal = this.showModal.bind(this);
+        this.hideModal = this.hideModal.bind(this);
     }
 
     showModal = () => {
@@ -29,38 +28,58 @@ class Customer extends Component {
         this.setState({ show: false });
     };
 
-    eidtCustomer = (customer) => {
-        this.setState({ customerToUpdate: customer})
-    }
 
-    handleFetch = (e) => {
-        e.preventDefault();
-        fetch(`${URL}/customer/create`, {
-            method: 'POST',
-            body: JSON.stringify({customer:{
-                name: this.state.name,
-                contact1: this.state.contact1,
-                contact2: this.state.contact2,
-                email1: this.state.email1,
-                email2: this.state.email2
-            }}),
+    fetchCustomer = (e) => {
+        fetch(`${URL}/customer/select`, {
+            method: 'GET',
             headers: new Headers({
                 'Content-Type': 'application/json',
                 'Authorization': this.props.token
             })
         }).then(res => res.json())
-        .then(data => console.log(data))
+        .then((data) => {
+            this.setState({ customerData: data });
+            console.log(this.state.customerData)
+        })
         .catch((err) => console.log(err))
     }
 
-    render() { 
-        return ( 
-                <div>
-                <main>
-                    <Modal show={this.state.show} handleClose={this.hideModal}>
-                        <ModalHeader>Enter New Customer</ModalHeader>
+    customerUpdate = (e) => {
+        e.preventDefault();
+        fetch(`${URL}/customer/update/${this.props.customerToUpdate.id}`, {
+            method: `PUT`,
+            body: JSON.stringify({
+                customer: {
+                    name: this.state.name,
+                    contact1: this.state.contact1,
+                    contact2: this.state.contact2,
+                    email1: this.state.email1,
+                    email2: this.state.email2
+                }}),
+            headers: new Headers({
+                'Content-Type': 'application/json',
+                'Authorization': this.props.token
+            })
+        }).then((res) => {
+            console.log(res);
+            this.hideModal()
+        })
+    }
+
+    componentDidMount() {
+        this.fetchCustomer()
+    }
+
+    customerMapper() {
+        return (this.state.customerData).map((customer, index) => {
+            return(
+                <div key={index}>
+                    <h3>{customer.name}</h3>
+                    <main>
+                        <Modal show={this.state.show} handleClose={this.hideModal}>
+                        <ModalHeader>Update Customer</ModalHeader>
                         <ModalBody>
-                            <Form onSubmit={this.handleFetch}>
+                        <Form onSubmit={this.customerUpdate}>
                                 <Label htmlFor="name">Customer Name</Label>
                                 <Input onChange={(e) => this.setState({name: e.target.value.toUpperCase()})} name="name" placeholder="Required" type="text" required/>
                                 <br />
@@ -76,16 +95,24 @@ class Customer extends Component {
                                 <Label htmlFor="name">Secondary Email</Label>
                                 <Input onChange={(e) => this.setState({email2: e.target.value.toUpperCase()})} name="name" placeholder="Optional" type="text" />
                                 <br />
-                                <Button type="submit" onClick={() => {this.hideModal()}}>Save</Button>
+                                <Button type="submit">Save</Button>
                             </Form>
                         </ModalBody>
                     </Modal>
-                </main>
-                <Button onClick={() => {this.showModal()}}>New Customer</Button>
-                <CustomerSearch token={this.props.token} customerToUpdate={this.state.customerToUpdate} editCustomer={this.editCustomer} />
+                    </main>
+                    <Button onClick={() => {this.showModal(); this.props.editCustomer(customer)}}>Update</Button>
+                </div>
+            )
+        })
+    }
+
+    render() { 
+        return ( 
+            <div>
+                {this.customerMapper()}
             </div>
          );
     }
 }
  
-export default Customer;
+export default CustomerSearch;
