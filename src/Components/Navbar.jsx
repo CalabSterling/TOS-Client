@@ -38,7 +38,7 @@ class Sitebar extends React.Component {
                         <Route exact path="/Carrier"><Carrier token={this.props.token}/></Route>
                         <Route exact path="/Customer"><Customer token={this.props.token}/></Route>
                         <Route exact path="/Order"><Order token={this.props.token}/></Route>
-                        <Route exact path="/Site"><Site token={this.props.token}/></Route>
+                        <Route exact path="/Site"><Site token={this.props.token} customerId={this.props.customerId} /></Route>
                     </Switch>
                 </div>
                 </Router>

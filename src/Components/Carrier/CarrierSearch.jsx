@@ -68,7 +68,7 @@ class CarrierSearch extends Component {
                         <ModalBody>
                             <Form onSubmit={this.carrierUpdate}>
                                 <Label htmlFor="name">Carrier Name</Label>
-                                <Input onChange={(e) => this.setState({name: e.target.value.toUpperCase()})} name="name" placeholder="Carrier Name" type="text" required/>
+                                <Input onChange={(e) => this.setState({name: e.target.value.toUpperCase()})} name="name" placeholder="Carrier Name" type="text" defaultValue={this.props.carrierToUpdate.name} required/>
                                 <Button type="submit" onClick={() => {this.hideModal()}}>Save</Button>
                             </Form>
                         </ModalBody>

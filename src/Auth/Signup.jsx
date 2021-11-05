@@ -45,6 +45,7 @@ class Signup extends React.Component {
             this.props.updateToken(data.sessionToken)
             this.props.updateID(data.ID)
             this.props.updateRole(data.role)
+            this.props.updateCustomerID(data.customerId)
             console.log(data.sessionToken)
         }).catch(
             (err) => {

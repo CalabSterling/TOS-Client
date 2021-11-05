@@ -19,6 +19,16 @@ class Customer extends Component {
          }
          this.showModal = this.showModal.bind(this);
          this.hideModal = this.hideModal.bind(this);
+         this.handleChange = this.handleChange.bind(this);
+         this.submitForm = this.submitForm.bind(this);
+    }
+
+    handleChange = (e) => {
+        this.setState({ [e.target.name]: e.target.value.toUpperCase()})
+    }
+
+    submitForm() {
+        console.log(this.state)
     }
 
     showModal = () => {
@@ -29,7 +39,7 @@ class Customer extends Component {
         this.setState({ show: false });
     };
 
-    eidtCustomer = (customer) => {
+    editCustomer = (customer) => {
         this.setState({ customerToUpdate: customer})
     }
 
@@ -62,19 +72,19 @@ class Customer extends Component {
                         <ModalBody>
                             <Form onSubmit={this.handleFetch}>
                                 <Label htmlFor="name">Customer Name</Label>
-                                <Input onChange={(e) => this.setState({name: e.target.value.toUpperCase()})} name="name" placeholder="Required" type="text" required/>
+                                <Input onChange={this.handleChange} name="name" placeholder="Required" type="text" required/>
                                 <br />
                                 <Label htmlFor="contact1">Primary Contact</Label>
-                                <Input onChange={(e) => this.setState({contact1: e.target.value.toUpperCase()})} name="contact1" placeholder="Required" type="text" required/>
+                                <Input onChange={this.handleChange} name="contact1" placeholder="Required" type="text" value={this.state.contact1} required/>
                                 <br />
                                 <Label htmlFor="email1">Primary Email</Label>
-                                <Input onChange={(e) => this.setState({email1: e.target.value.toUpperCase()})} name="email1" placeholder="Required" type="text" required/>
+                                <Input onChange={this.handleChange} name="email1" placeholder="Required" type="text" required/>
                                 <br />
                                 <Label htmlFor="contact2">Secondary Contact</Label>
-                                <Input onChange={(e) => this.setState({contact2: e.target.value.toUpperCase()})} name="name" placeholder="Optional" type="text"/>
+                                <Input onChange={this.handleChange} name="contact2" placeholder="Optional" type="text"/>
                                 <br />
-                                <Label htmlFor="name">Secondary Email</Label>
-                                <Input onChange={(e) => this.setState({email2: e.target.value.toUpperCase()})} name="name" placeholder="Optional" type="text" />
+                                <Label htmlFor="email2">Secondary Email</Label>
+                                <Input onChange={this.handleChange} name="email2" placeholder="Optional" type="text" />
                                 <br />
                                 <Button type="submit" onClick={() => {this.hideModal()}}>Save</Button>
                             </Form>

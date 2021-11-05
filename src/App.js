@@ -22,7 +22,7 @@ import Sitebar from './Components/Navbar';
 class App extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {sessionToken: '', ID: '', role: ''}
+    this.state = {sessionToken: '', ID: '', role: '', customerId: ''}
   }
 
   updateToken = (newToken) => {
@@ -39,6 +39,11 @@ class App extends React.Component {
     this.setState({role: newRole})
     localStorage.setItem('role', newRole)
   }
+
+  updateCustomerID = (newCID) => {
+    this.setState({ customerId: newCID})
+    localStorage.setItem('customerID', newCID)
+  }
   
   clearToken = () => {
     localStorage.clear();
@@ -54,14 +59,14 @@ class App extends React.Component {
   }
 
   protectedViews = () => {
-    return (this.state.sessionToken === localStorage.getItem('token') ? <></> : <Auth updateToken={this.updateToken} updateID={this.updateID} updateRole={this.updateRole} />);
+    return (this.state.sessionToken === localStorage.getItem('token') ? <></> : <Auth updateToken={this.updateToken} updateID={this.updateID} updateRole={this.updateRole} updateCustomerID={this.updateCustomerID} />);
   };
 
   render() {
     return (
       <div >
         <div>
-          {this.state.sessionToken === localStorage.getItem('token') ? <Sitebar token={this.state.sessionToken} clickLogout={this.clearToken} role={this.state.role} /> : <></> }
+          {this.state.sessionToken === localStorage.getItem('token') ? <Sitebar token={this.state.sessionToken} clickLogout={this.clearToken} role={this.state.role} customerId={this.state.customerId}/> : <></> }
           <div>
             {this.protectedViews()}
           </div>

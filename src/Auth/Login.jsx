@@ -46,6 +46,7 @@ class Login extends React.Component {
               this.props.updateToken(data.sessionToken);
               this.props.updateID(data.ID);
               this.props.updateRole(data.user.role)
+              this.props.updateCustomerID(data.user.customerId)
               console.log(data);
           })
           .catch(err => {
