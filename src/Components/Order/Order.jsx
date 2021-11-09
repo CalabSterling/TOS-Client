@@ -61,11 +61,16 @@ class Order extends Component {
         fetch(`${URL}/order/create`, {
             method: 'POST',
             body: JSON.stringify({order:{
-                name: this.state.name,
-                contact1: this.state.contact1,
-                contact2: this.state.contact2,
-                email1: this.state.email1,
-                email2: this.state.email2
+                pickupSite: this.state.pickupSite,
+                dropoffSite: this.state.dropoffSite,
+                pickupDate: this.state.pickupDate,
+                tempControl: this.state.tempControl,
+                orderNumber: this.state.orderNumber,
+                referenceNumber: this.state.referenceNumber,
+                palletCount: this.state.palletCount,
+                weight: this.state.weight,
+                tempSet: this.state.tempSet,
+                customerId: this.props.customerId
             }}),
             headers: new Headers({
                 'Content-Type': 'application/json',
@@ -103,6 +108,14 @@ class Order extends Component {
                         <ModalHeader>Enter New Order</ModalHeader>
                         <ModalBody>
                             <Form onSubmit={this.handleFetch}>
+                                <Label htmlFor="referenceNumber">Reference Number</Label>
+                                <Input onChange={this.handleChange} name="referenceNumber" placeholder="Required" type="text" value={this.state.referenceNumber} required/>
+                                <br />
+
+                                <Label htmlFor="orderNumber">Order Number</Label>
+                                <Input onChange={this.handleChange} name="orderNumber" placeholder="Required" type="text" value={this.state.orderNumber} required/>
+                                <br />
+
                                 <Label htmlFor="pickupSite">Pickup Site</Label>
                                 <select onChange={this.handleChange} name="pickupSite" placeholder="Required" required>
                                     {(this.state.siteData).map((option) => {
@@ -110,6 +123,7 @@ class Order extends Component {
                                     })}
                                 </select>
                                 <br />
+
                                 <Label htmlFor="dropoffSite">Drop Off Site</Label>
                                 <select onChange={this.handleChange} name="dropoffSite" placeholder="Required" required>
                                     {(this.state.siteData).map((option) => {
@@ -117,16 +131,28 @@ class Order extends Component {
                                     })}
                                 </select>
                                 <br />
+
                                 <Label htmlFor="pickupDate">Pickup Date</Label>
                                 <Input onChange={this.handleChange} name="pickupDate" placeholder="Required" type="date" value={this.state.pickupDate} required/>
                                 <br />
+
                                 <Label htmlFor="tempControl">Temperature Controlled</Label>
-                                <select value={this.state.tempControl} onChange={this.handleChange} name="tempControl">
+                                <select value={this.state.tempControl} onChange={this.handleChange} name="tempControl" required>
                                     <option value={true}>Yes</option>
                                     <option value={false}>No</option>
                                 </select>
                                 
                                 {this.state.tempControl === 'true' ? <Input onChange={this.handleChange} name="tempSet" placeholder="Temperature °F" /> : null }
+                                <br />
+
+                                <Label htmlFor="palletCount">Pallet Count</Label>
+                                <Input onChange={this.handleChange} name="palletCount" placeholder="Required" type="number" value={this.state.palletCount} required/>
+                                <br />
+
+                                <Label htmlFor="weight">Weight</Label>
+                                <Input onChange={this.handleChange} name="weight" placeholder="Optional" type="number" value={this.state.weight}/>
+                                <br />
+
                                 <Button type="submit" onClick={() => {this.hideModal()}}>Save</Button>
                             </Form>
                         </ModalBody>
