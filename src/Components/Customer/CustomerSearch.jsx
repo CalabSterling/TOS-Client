@@ -1,60 +1,22 @@
 import React, { Component } from 'react';
-import { Button, ModalHeader, ModalBody, Label, Input, Form } from 'reactstrap';
-import Modal from '../../Modal'
+import { Button, ModalHeader, ModalBody, Label, Input, Form, Modal } from 'reactstrap';
 
 import URL from '../../Helpers/Environment';
 
 class CustomerSearch extends Component {
     constructor(props) {
         super(props);
-        this.state = { 
-            customerData: [], 
-            show: false,  
-            customer: [],
-            name: '',
-            contact1: '',
-            contact2: '',
-            email1: '',
-            email2: '', }
-        this.showModal = this.showModal.bind(this);
-        this.hideModal = this.hideModal.bind(this);
-        this.handleChange = this.handleChange.bind(this);
-        this.submitForm = this.submitForm.bind(this);
+        this.state = {   
+            name: this.props.customerToUpdate.name,
+            contact1: this.props.customerToUpdate.contact1,
+            contact2: this.props.customerToUpdate.contact2,
+            email1: this.props.customerToUpdate.email1,
+            email2: this.props.customerToUpdate.email2
+        }
     }
 
-    handleChange = (e) => {
-        this.setState({ [e.target.name]: e.target.value.toUpperCase()})
-    }
-
-    submitForm() {
-        console.log(this.state)
-    }
-
-    showModal = () => {
-        this.setState({ show: true });
-    };
-
-    hideModal = () => {
-        this.setState({ show: false });
-    };
-
-
-    fetchCustomer = (e) => {
-        fetch(`${URL}/customer/select`, {
-            method: 'GET',
-            headers: new Headers({
-                'Content-Type': 'application/json',
-                'Authorization': this.props.token
-            })
-        }).then(res => res.json())
-        .then((data) => {
-            this.setState({ customerData: data });
-        })
-        .catch((err) => console.log(err))
-    }
-
-    customerUpdate = (e) => {
-        e.preventDefault();
+    customerUpdate = (event) => {
+        event.preventDefault();
         fetch(`${URL}/customer/update/${this.props.customerToUpdate.id}`, {
             method: `PUT`,
             body: JSON.stringify({
@@ -70,57 +32,38 @@ class CustomerSearch extends Component {
                 'Authorization': this.props.token
             })
         }).then((res) => {
-            console.log(res);
-            this.hideModal()
-        })
-    }
-
-    componentDidMount() {
-        this.fetchCustomer()
-    }
-
-    customerMapper() {
-        return (this.state.customerData).map((customer, index) => {
-            console.log(customer.name)
-            return(
-                <div key={index}>
-                    <h3>{customer.name}</h3>
-                    <main>
-                        <Modal show={this.state.show} handleClose={this.hideModal}>
-                        <ModalHeader>Update Customer</ModalHeader>
-                        <ModalBody>
-                        <Form onSubmit={this.customerUpdate}>
-                                <Label htmlFor="name">Customer Name</Label>
-                                <Input onChange={this.handleChange} defaultValue={this.props.customerToUpdate.name} name="name" placeholder="Required" type="text" required/>
-                                <br />
-                                <Label htmlFor="contact1">Primary Contact</Label>
-                                <Input onChange={this.handleChange} defaultValue={this.props.customerToUpdate.contact1} name="contact1" placeholder="Required" type="text" required/>
-                                <br />
-                                <Label htmlFor="email1">Primary Email</Label>
-                                <Input onChange={this.handleChange} defaultValue={this.props.customerToUpdate.email1} name="email1" placeholder="Required" type="text" required/>
-                                <br />
-                                <Label htmlFor="contact2">Secondary Contact</Label>
-                                <Input onChange={this.handleChange} defaultValue={this.props.customerToUpdate.contact2} name="contact2" placeholder="Optional" type="text"/>
-                                <br />
-                                <Label htmlFor="email2">Secondary Email</Label>
-                                <Input onChange={this.handleChange} defaultValue={this.props.customerToUpdate.email2} name="email2" placeholder="Optional" type="text" />
-                                <br />
-                                <Button type="submit">Save</Button>
-                            </Form>
-                        </ModalBody>
-                    </Modal>
-                    </main>
-                    <Button onClick={() => {this.showModal(); this.props.editCustomer(customer)}}>Update</Button>
-                </div>
-            )
-        })
+            res.json();
+            this.props.updateOff()
+            this.props.fetchCustomer()
+        })  
     }
 
     render() { 
         return ( 
-            <div>
-                {this.customerMapper()}
-            </div>
+                <Modal isOpen={true}>
+                <ModalHeader>Update Customer</ModalHeader>
+                <ModalBody>
+                    <Form onSubmit={this.customerUpdate}>
+                        <Label htmlFor="name">Customer Name</Label>
+                        <Input onChange={(e) => this.setState({name: e.target.value.toUpperCase()})} value={this.state.name} name="name" placeholder="Required" type="text" required/>
+                        <br />
+                        <Label htmlFor="contact1">Primary Contact</Label>
+                        <Input onChange={(e) => this.setState({contact1: e.target.value.toUpperCase()})} value={this.state.contact1} name="contact1" placeholder="Required" type="text" required/>
+                        <br />
+                        <Label htmlFor="email1">Primary Email</Label>
+                        <Input onChange={(e) => this.setState({email1: e.target.value.toUpperCase()})} defaultValue={this.state.email1} name="email1" placeholder="Required" type="text" required/>
+                        <br />
+                        <Label htmlFor="contact2">Secondary Contact</Label>
+                        <Input onChange={(e) => this.setState({contact2: e.target.value.toUpperCase()})} defaultValue={this.state.contact2} name="contact2" placeholder="Optional" type="text"/>
+                        <br />
+                        <Label htmlFor="email2">Secondary Email</Label>
+                        <Input onChange={(e) => this.setState({email2: e.target.value.toUpperCase()})} defaultValue={this.state.email2} name="email2" placeholder="Optional" type="text" />
+                        <br />
+                        <Button type="submit">Save</Button>
+                        <Button type="button" onClick={() => this.props.updateOff()}>Cancel</Button>
+                    </Form>
+                </ModalBody>
+                </Modal>
          );
     }
 }

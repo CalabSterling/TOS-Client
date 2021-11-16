@@ -98,8 +98,7 @@ class Auth extends React.Component {
         this.setState({active: "signup"});
     }
 
-    switchToLogin = (e) => {
-        e.preventDefault();
+    switchToLogin = () => {
         this.setState({active: "login"});
     }
 
@@ -124,7 +123,7 @@ class Auth extends React.Component {
                             </div>
                         </div>
                         <div>
-                            {this.state.active === 'login' ? <Login switchToSignup={this.switchToSignup} updateToken={this.props.updateToken} updateID={this.props.updateID} updateRole={this.props.updateRole} updateCustomerID={this.props.updateCustomerID} /> : <Signup switchToLogin={this.switchToLogin} updateToken={this.props.updateToken} updateID={this.props.updateID} updateRole={this.props.updateRole} updateCustomerID={this.props.updateCustomerID}/>}
+                            {this.state.active === 'login' ? <Login switchToSignup={this.switchToSignup} updateToken={this.props.updateToken} updateID={this.props.updateID} updateRole={this.props.updateRole} /> : <Signup switchToLogin={this.switchToLogin} updateToken={this.props.updateToken} updateID={this.props.updateID} updateRole={this.props.updateRole} />}
                         </div>
                     </div>
                     </div>

@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
-import { Button, Form, Label, Input, ModalHeader, ModalBody } from 'reactstrap';
-import Modal from '../../Modal';
+import { Button, Form, Label, Input, ModalHeader, ModalBody, Modal, Card, CardTitle, CardBody } from 'reactstrap';
 import CustomerSearch from './CustomerSearch';
 
 import URL from '../../Helpers/Environment';
@@ -10,37 +9,36 @@ class Customer extends Component {
         super(props);
         this.state = { 
             customerToUpdate: [], 
-            show: false,
+            customerData: [],
+            updateActive: false,
+            createCustomerActive: false,
             name: '',
             contact1: '',
             contact2: '',
             email1: '',
             email2: '',
          }
-         this.showModal = this.showModal.bind(this);
-         this.hideModal = this.hideModal.bind(this);
-         this.handleChange = this.handleChange.bind(this);
-         this.submitForm = this.submitForm.bind(this);
+         this.baseState = this.state
     }
 
-    handleChange = (e) => {
-        this.setState({ [e.target.name]: e.target.value.toUpperCase()})
-    }
 
-    submitForm() {
-        console.log(this.state)
-    }
+    createCustomerOn = () => {this.setState({ createCustomerActive : true })}
+    createCustomerOff = () => {this.setState({ createCustomerActive: false })}
+    updateOn = () => {this.setState({ updateActive: true })}
+    updateOff = () => {this.setState({ updateActive: false })}
 
-    showModal = () => {
-        this.setState({ show: true });
-    };
-
-    hideModal = () => {
-        this.setState({ show: false });
-    };
-
-    editCustomer = (customer) => {
-        this.setState({ customerToUpdate: customer})
+    fetchCustomer = () => {
+        fetch(`${URL}/customer/select`, {
+            method: 'GET',
+            headers: new Headers({
+                'Content-Type': 'application/json',
+                'Authorization': this.props.token
+            })
+        }).then(res => res.json())
+        .then((data) => {
+            this.setState({ customerData: data });
+        })
+        .catch((err) => console.log(err))
     }
 
     handleFetch = (e) => {
@@ -60,39 +58,70 @@ class Customer extends Component {
             })
         }).then(res => res.json())
         .then(data => console.log(data))
+        .then(this.fetchCustomer())
+        .then(this.setState(this.baseState))
         .catch((err) => console.log(err))
+    }
+
+    deleteCustomer = (customer) => {
+        fetch(`${URL}/customer/${customer.id}`, {
+            method: 'DELETE',
+            headers: new Headers({
+                "Content-Type": "application/json",
+                Authorization: this.props.token
+            }),
+        }).then((res) => console.log(res))
+        .then(this.fetchCustomer())
+    }
+
+    componentDidMount() {
+        this.fetchCustomer()
+    }
+
+    customerMapper() {
+        return(this.state.customerData.map((customer, index) => {
+            return (
+                <Card key={index}>
+                    <CardTitle>{customer.name}</CardTitle>
+                    <CardBody>
+                    <Button type="button" onClick={() => {this.updateOn(); this.setState({ customerToUpdate: customer }) }}>Update</Button>
+                    <Button type="button" color="danger" onClick={() => {this.deleteCustomer(customer)}}>Delete</Button>
+                    </CardBody>
+                </Card>
+            )
+        }))
     }
 
     render() { 
         return ( 
                 <div>
-                <main>
-                    <Modal show={this.state.show} handleClose={this.hideModal}>
-                        <ModalHeader>Enter New Customer</ModalHeader>
-                        <ModalBody>
-                            <Form onSubmit={this.handleFetch}>
-                                <Label htmlFor="name">Customer Name</Label>
-                                <Input onChange={this.handleChange} name="name" placeholder="Required" type="text" required/>
-                                <br />
-                                <Label htmlFor="contact1">Primary Contact</Label>
-                                <Input onChange={this.handleChange} name="contact1" placeholder="Required" type="text" value={this.state.contact1} required/>
-                                <br />
-                                <Label htmlFor="email1">Primary Email</Label>
-                                <Input onChange={this.handleChange} name="email1" placeholder="Required" type="text" required/>
-                                <br />
-                                <Label htmlFor="contact2">Secondary Contact</Label>
-                                <Input onChange={this.handleChange} name="contact2" placeholder="Optional" type="text"/>
-                                <br />
-                                <Label htmlFor="email2">Secondary Email</Label>
-                                <Input onChange={this.handleChange} name="email2" placeholder="Optional" type="text" />
-                                <br />
-                                <Button type="submit" onClick={() => {this.hideModal()}}>Save</Button>
-                            </Form>
-                        </ModalBody>
-                    </Modal>
-                </main>
-                <Button onClick={() => {this.showModal()}}>New Customer</Button>
-                <CustomerSearch token={this.props.token} customerToUpdate={this.state.customerToUpdate} editCustomer={this.editCustomer} />
+                    <Button onClick={() => {this.createCustomerOn()}}>New Customer</Button>
+                        <Modal isOpen={this.state.createCustomerActive}>
+                            <ModalHeader><h3>Enter New Customer</h3></ModalHeader>
+                            <ModalBody>
+                                <Form onSubmit={this.handleFetch}>
+                                    <Label htmlFor="name">Customer Name</Label>
+                                    <Input onChange={(e) => this.setState({name: e.target.value.toUpperCase()})} name="name" placeholder="Required" type="text" value={this.state.name} required/>
+                                    <br />
+                                    <Label htmlFor="contact1">Primary Contact</Label>
+                                    <Input onChange={(e) => this.setState({contact1: e.target.value.toUpperCase()})} name="contact1" placeholder="Required" type="text" value={this.state.contact1} required/>
+                                    <br />
+                                    <Label htmlFor="email1">Primary Email</Label>
+                                    <Input onChange={(e) => this.setState({email1: e.target.value.toUpperCase()})} name="email1" placeholder="Required" type="text" value={this.state.email1} required/>
+                                    <br />
+                                    <Label htmlFor="contact2">Secondary Contact</Label>
+                                    <Input onChange={(e) => this.setState({contact2: e.target.value.toUpperCase()})} name="contact2" placeholder="Optional" type="text" value={this.state.contact2}/>
+                                    <br />
+                                    <Label htmlFor="email2">Secondary Email</Label>
+                                    <Input onChange={(e) => this.setState({email2: e.target.value.toUpperCase()})} name="email2" placeholder="Optional" type="text" value={this.state.email2}/>
+                                    <br />
+                                    <Button type="submit" onClick={() => {this.createCustomerOff()}}>Save</Button>
+                                    <Button type="button" onClick={() => {this.createCustomerOff()}}>Cancel</Button>
+                                </Form>
+                            </ModalBody>
+                        </Modal>
+                    {this.customerMapper()}
+                    {this.state.updateActive ? <CustomerSearch token={this.props.token} role={this.props.role} updateActive={this.state.updateActive} updateOn={this.updateOn} updateOff={this.updateOff} customerToUpdate={this.state.customerToUpdate} fetchCustomer={this.fetchCustomer} /> : null }
             </div>
          );
     }

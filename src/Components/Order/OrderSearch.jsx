@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
-import { Button, ModalHeader, ModalBody, Label, Input, Form } from 'reactstrap';
-import Modal from '../../Modal'
+import { Button, Form, Input, Label, ModalHeader, ModalBody, Modal } from 'reactstrap';
 
 import URL from '../../Helpers/Environment';
 
@@ -8,52 +7,22 @@ class OrderSearch extends Component {
     constructor(props) {
         super(props);
         this.state = { 
-            orderData: [], 
-            show: false,  
-            order: [],
-            pickupSite: '',
-            dropoffSite: '',
-            pickupDate: '',
-            tempControl: '',
-            orderNumber: '',
-            referenceNumber: '',
-            palletCount: '',
-            weight: '',
-            tempSet: '',
-            customerId: '',
-            status: '',
-            equipment: '',
-            sellRate: '',
-            proNumber: '',
-            pickupTime: '',
-            orderId: '',
-            carrierId: '', 
-        }
-        this.showModal = this.showModal.bind(this);
-        this.hideModal = this.hideModal.bind(this);
-        this.handleChange = this.handleChange.bind(this);
-        this.submitForm = this.submitForm.bind(this);
+            siteData: [],
+            pickupSite: this.props.orderToUpdate.pickupSite,
+            dropoffSite: this.props.orderToUpdate.dropoffSite,
+            pickupDate: this.props.orderToUpdate.pickupDate,
+            tempControl: this.props.orderToUpdate.tempControl,
+            orderNumber: this.props.orderToUpdate.orderNumber,
+            referenceNumber: this.props.orderToUpdate.referenceNumber,
+            palletCount: this.props.orderToUpdate.palletCount,
+            weight: this.props.orderToUpdate.weight,
+            tempSet: this.props.orderToUpdate.tempSet,
+         }
+         this.baseState = this.state
     }
 
-    handleChange = (e) => {
-        this.setState({ [e.target.name]: e.target.value.toUpperCase()})
-    }
-
-    submitForm() {
-        console.log(this.state)
-    }
-
-    showModal = () => {
-        this.setState({ show: true });
-    };
-
-    hideModal = () => {
-        this.setState({ show: false });
-    };
-
-
-    fetchOrder = (e) => {
-        fetch(`${URL}/order/select`, {
+    fetchSite = () => {
+        fetch(`${URL}/site/select`, {
             method: 'GET',
             headers: new Headers({
                 'Content-Type': 'application/json',
@@ -61,7 +30,8 @@ class OrderSearch extends Component {
             })
         }).then(res => res.json())
         .then((data) => {
-            this.setState({ orderData: data });
+            this.setState({ siteData: data })
+            console.log(this.state.siteData);
         })
         .catch((err) => console.log(err))
     }
@@ -69,72 +39,95 @@ class OrderSearch extends Component {
     orderUpdate = (e) => {
         e.preventDefault();
         fetch(`${URL}/order/update/${this.props.orderToUpdate.id}`, {
-            method: `PUT`,
+            method: 'PUT',
             body: JSON.stringify({
-                order: {
-                    name: this.state.name,
-                    contact1: this.state.contact1,
-                    contact2: this.state.contact2,
-                    email1: this.state.email1,
-                    email2: this.state.email2
+                order:{
+                    pickupSite: this.state.pickupSite,
+                    dropoffSite: this.state.dropoffSite,
+                    pickupDate: this.state.pickupDate,
+                    tempControl: this.state.tempControl,
+                    orderNumber: this.state.orderNumber,
+                    referenceNumber: this.state.referenceNumber,
+                    palletCount: this.state.palletCount,
+                    weight: this.state.weight,
+                    tempSet: this.state.tempSet,
+                    customerId: this.props.customerId,
                 }}),
             headers: new Headers({
                 'Content-Type': 'application/json',
                 'Authorization': this.props.token
             })
-        }).then((res) => {
-            console.log(res);
-            this.hideModal()
+        }).then(res => res.json())
+        .then(data => {
+            console.log(data);
+            this.props.updateOff()
+            this.props.fetchOrder()
         })
     }
 
     componentDidMount() {
-        this.fetchOrder()
+        this.fetchSite()
     }
 
-    orderMapper() {
-        return (this.state.orderData).map((order, index) => {
-            console.log(order.name)
-            return(
-                <div key={index}>
-                    <h3>{order.name}</h3>
-                    <main>
-                        <Modal show={this.state.show} handleClose={this.hideModal}>
-                        <ModalHeader>Update Order</ModalHeader>
-                        <ModalBody>
-                        <Form onSubmit={this.orderUpdate}>
-                                <Label htmlFor="name">Order Name</Label>
-                                <Input onChange={this.handleChange} defaultValue={this.props.orderToUpdate.name} name="name" placeholder="Required" type="text" required/>
-                                <br />
-                                <Label htmlFor="contact1">Primary Contact</Label>
-                                <Input onChange={this.handleChange} defaultValue={this.props.orderToUpdate.contact1} name="contact1" placeholder="Required" type="text" required/>
-                                <br />
-                                <Label htmlFor="email1">Primary Email</Label>
-                                <Input onChange={this.handleChange} defaultValue={this.props.orderToUpdate.email1} name="email1" placeholder="Required" type="text" required/>
-                                <br />
-                                <Label htmlFor="contact2">Secondary Contact</Label>
-                                <Input onChange={this.handleChange} defaultValue={this.props.orderToUpdate.contact2} name="contact2" placeholder="Optional" type="text"/>
-                                <br />
-                                <Label htmlFor="email2">Secondary Email</Label>
-                                <Input onChange={this.handleChange} defaultValue={this.props.orderToUpdate.email2} name="email2" placeholder="Optional" type="text" />
-                                <br />
-                                <Button type="submit">Save</Button>
-                            </Form>
-                        </ModalBody>
-                    </Modal>
-                    </main>
-                    <Button onClick={() => {this.showModal(); this.props.editOrder(order)}}>Update</Button>
-                </div>
-            )
-        })
-    }
-
-    render() { 
-        return ( 
+    render() {
+        return(
             <div>
-                {this.orderMapper()}
+                <Modal isOpen={true}>
+                    <ModalHeader>Update Order</ModalHeader>
+                    <ModalBody>
+                        <Form onSubmit={this.orderUpdate}>
+                                <Label htmlFor="referenceNumber">Reference Number</Label>
+                                <Input onChange={(e) => this.setState({referenceNumber: e.target.value.toUpperCase()})} name="referenceNumber" placeholder="Required" type="text" value={this.state.referenceNumber} required/>
+                                <br />
+
+                                <Label htmlFor="orderNumber">Order Number</Label>
+                                <Input onChange={(e) => this.setState({orderNumber: e.target.value.toUpperCase()})} name="orderNumber" placeholder="Required" type="text" value={this.state.orderNumber} required/>
+                                <br />
+
+                                <Label htmlFor="pickupSite">Pickup Site</Label>
+                                <select onChange={(e) => this.setState({pickupSite: e.target.value})} name="pickupSite" placeholder="Required" value={this.state.pickupSite} required>
+                                    {(this.state.siteData).map((option, index) => {
+                                        return <option value={index}>{option.name}- {option.address}, {option.city}, {option.state} {option.zipCode}</option>
+                                    })}
+                                </select>
+                                <br />
+
+                                <Label htmlFor="dropoffSite">Drop Off Site</Label>
+                                <select onChange={(e) => this.setState({dropoffSite: e.target.value})} name="dropoffSite" placeholder="Required" value={this.state.dropoffSite} required>
+                                    {(this.state.siteData).map((option, index) => {
+                                        return <option value={index} >{option.name}- {option.address}, {option.city}, {option.state} {option.zipCode}</option>
+                                    })}
+                                </select>
+                                <br />
+
+                                <Label htmlFor="pickupDate">Pickup Date</Label>
+                                <Input onChange={(e) => this.setState({pickupDate: e.target.value})} name="pickupDate" type="date" value={this.state.pickupDate} required/>
+                                <br />
+
+                                <Label htmlFor="tempControl">Temperature Controlled</Label>
+                                <select value={this.state.tempControl} onChange={(e) => this.setState({tempControl: e.target.value})} name="tempControl" required>
+                                    <option value={true}>Yes</option>
+                                    <option value={false}>No</option>
+                                </select>
+                                
+                                {this.state.tempControl === 'true' ? <Input onChange={(e) => this.setState({name: e.target.value})} name="tempSet" placeholder="Temperature °F" value={this.state.tempSet} /> : null }
+                                <br />
+
+                                <Label htmlFor="palletCount">Pallet Count</Label>
+                                <Input onChange={(e) => this.setState({palletCount: e.target.value})} name="palletCount" placeholder="Required" type="number" value={parseInt(this.state.palletCount)} required/>
+                                <br />
+
+                                <Label htmlFor="weight">Weight</Label>
+                                <Input onChange={(e) => this.setState({weight: e.target.value})} name="weight" placeholder="Optional" type="number" value={parseInt(this.state.weight)}/>
+                                <br />
+
+                                <Button type="submit">Save</Button>
+                                <Button type="button" onClick={() => this.props.updateOff()}>Cancel</Button>
+                        </Form>
+                    </ModalBody>
+                </Modal>
             </div>
-         );
+        )
     }
 }
  

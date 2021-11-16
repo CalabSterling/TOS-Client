@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
-import { Button, ModalHeader, ModalBody, Label, Input, Form } from 'reactstrap';
-import Modal from '../../Modal'
+import { Button, ModalHeader, ModalBody, Modal, Label, Input, Form } from 'reactstrap';
 
 import URL from '../../Helpers/Environment';
 
@@ -8,51 +7,13 @@ class SiteSearch extends Component {
     constructor(props) {
         super(props);
         this.state = { 
-            siteData: [], 
-            show: false,  
-            site: [],
-            name: '',
-            address: '',
-            address2: '',
-            city: '',
-            state: '',
-            zipCode: '',
+            name: this.props.siteToUpdate.name,
+            address: this.props.siteToUpdate.address,
+            address2: this.props.siteToUpdate.address2,
+            city: this.props.siteToUpdate.city,
+            state: this.props.siteToUpdate.state,
+            zipCode: this.props.siteToUpdate.zipCode,
         }
-        this.showModal = this.showModal.bind(this);
-        this.hideModal = this.hideModal.bind(this);
-        this.handleChange = this.handleChange.bind(this);
-        this.submitForm = this.submitForm.bind(this);
-    }
-
-    handleChange = (e) => {
-        this.setState({ [e.target.name]: e.target.value.toUpperCase()})
-    }
-
-    submitForm() {
-        console.log(this.state)
-    }
-
-    showModal = () => {
-        this.setState({ show: true });
-    };
-
-    hideModal = () => {
-        this.setState({ show: false });
-    };
-
-
-    fetchSite = (e) => {
-        fetch(`${URL}/site/select`, {
-            method: 'GET',
-            headers: new Headers({
-                'Content-Type': 'application/json',
-                'Authorization': this.props.token
-            })
-        }).then(res => res.json())
-        .then((data) => {
-            this.setState({ siteData: data });
-        })
-        .catch((err) => console.log(err))
     }
 
     siteUpdate = (e) => {
@@ -67,7 +28,6 @@ class SiteSearch extends Component {
                     city: this.state.city,
                     state: this.state.state,
                     zipCode: this.state.zipCode,
-                    customerId: this.props.customerId
                 }}),
             headers: new Headers({
                 'Content-Type': 'application/json',
@@ -75,57 +35,41 @@ class SiteSearch extends Component {
             })
         }).then((res) => {
             console.log(res);
-            this.hideModal()
-        })
-    }
-
-    componentDidMount() {
-        this.fetchSite()
-    }
-
-    siteMapper() {
-        return (this.state.siteData).map((site, index) => {
-            return(
-                <div key={index}>
-                    <h3>{site.name}</h3>
-                    <main>
-                        <Modal show={this.state.show} handleClose={this.hideModal}>
-                        <ModalHeader>Update Site</ModalHeader>
-                        <ModalBody>
-                        <Form onSubmit={this.siteUpdate}>
-                                <Label htmlFor="name">Site Name</Label>
-                                <Input onChange={this.handleChange} name="name" placeholder="Required" type="text" defaultValue={this.props.siteToUpdate.name} required/>
-                                <br />
-                                <Label htmlFor="address">Address</Label>
-                                <Input onChange={this.handleChange} name="address" placeholder="Required" type="text" defaultValue={this.props.siteToUpdate.address} required/>
-                                <br />
-                                <Label htmlFor="address2">Address Line 2</Label>
-                                <Input onChange={this.handleChange} name="address2" placeholder="Optional" type="text" defaultValue={this.props.siteToUpdate.address2}/>
-                                <br />
-                                <Label htmlFor="city">City</Label>
-                                <Input onChange={this.handleChange} name="city" placeholder="Required" type="text" defaultValue={this.props.siteToUpdate.city} required/>
-                                <br />
-                                <Label htmlFor="state">State</Label>
-                                <Input onChange={this.handleChange} name="state" placeholder="Required" type="text" defaultValue={this.props.siteToUpdate.state} required/>
-                                <br />
-                                <Label htmlFor="zipCode">Zip Code</Label>
-                                <Input onChange={this.handleChange} name="zipCode" placeholder="Required" type="text" defaultValue={this.props.siteToUpdate.zipCode} required/>
-                                <br />
-                                <Button type="submit">Save</Button>
-                            </Form>
-                        </ModalBody>
-                    </Modal>
-                    </main>
-                    <Button onClick={() => {this.showModal(); this.props.editSite(site)}}>Update</Button>
-                </div>
-            )
+            this.props.updateOff()
+            this.props.fetchSite()
         })
     }
 
     render() { 
         return ( 
             <div>
-                {this.siteMapper()}
+                <Modal isOpen={true}>
+                        <ModalHeader>Update Site</ModalHeader>
+                        <ModalBody>
+                        <Form onSubmit={this.siteUpdate}>
+                                <Label htmlFor="name">Site Name</Label>
+                                <Input onChange={(e) => this.setState({name: e.target.value.toUpperCase()})} name="name" placeholder="Required" type="text" value={this.state.name} required/>
+                                <br />
+                                <Label htmlFor="address">Address</Label>
+                                <Input onChange={(e) => this.setState({address: e.target.value.toUpperCase()})} name="address" placeholder="Required" type="text" value={this.state.address} required/>
+                                <br />
+                                <Label htmlFor="address2">Address Line 2</Label>
+                                <Input onChange={(e) => this.setState({address2: e.target.value.toUpperCase()})} name="address2" placeholder="Optional" type="text" value={this.state.address2}/>
+                                <br />
+                                <Label htmlFor="city">City</Label>
+                                <Input onChange={(e) => this.setState({city: e.target.value.toUpperCase()})} name="city" placeholder="Required" type="text" value={this.state.city} required/>
+                                <br />
+                                <Label htmlFor="state">State</Label>
+                                <Input onChange={(e) => this.setState({state: e.target.value.toUpperCase()})} name="state" placeholder="Required" type="text" value={this.state.state} required/>
+                                <br />
+                                <Label htmlFor="zipCode">Zip Code</Label>
+                                <Input onChange={(e) => this.setState({zipCode: e.target.value.toUpperCase()})} name="zipCode" placeholder="Required" type="text" value={this.state.zipCode} required/>
+                                <br />
+                                <Button type="submit">Save</Button>
+                                <Button type="button" onClick={() => this.props.updateOff()}>Cancel</Button>
+                            </Form>
+                        </ModalBody>
+                    </Modal>
             </div>
          );
     }

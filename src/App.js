@@ -39,34 +39,20 @@ class App extends React.Component {
     this.setState({role: newRole})
     localStorage.setItem('role', newRole)
   }
-
-  updateCustomerID = (newCID) => {
-    this.setState({ customerId: newCID})
-    localStorage.setItem('customerID', newCID)
-  }
   
   clearToken = () => {
     localStorage.clear();
     this.setState({sessionToken: ''});
   }
 
-  componentDidUpdate = () => {
-    console.log(
-     'ID=', localStorage.getItem('ID'),
-      'sessionToken=', localStorage.getItem('token'),
-      this.state.sessionToken,
-      )
-  }
-
   protectedViews = () => {
-    return (this.state.sessionToken === localStorage.getItem('token') ? <></> : <Auth updateToken={this.updateToken} updateID={this.updateID} updateRole={this.updateRole} updateCustomerID={this.updateCustomerID} />);
+    return (this.state.sessionToken === localStorage.getItem('token') ? <Sitebar token={this.state.sessionToken} clickLogout={this.clearToken} role={this.state.role} customerId={this.state.customerId} updateOrder={this.updateOrder} updateOrderAdmin={this.updateOrderAdmin} orderToUpdate={this.state.ordertoUpdate} orderAdminToUpdate={this.state.orderAdminToUpdate} clearToken={this.clearToken} /> : <Auth updateToken={this.updateToken} updateID={this.updateID} updateRole={this.updateRole} updateCustomerID={this.updateCustomerID} />);
   };
 
   render() {
     return (
       <div >
         <div>
-          {this.state.sessionToken === localStorage.getItem('token') ? <Sitebar token={this.state.sessionToken} clickLogout={this.clearToken} role={this.state.role} customerId={this.state.customerId}/> : <></> }
           <div>
             {this.protectedViews()}
           </div>
