@@ -8,9 +8,9 @@ switch (window.location.hostname) {
         URL = 'http://localhost:3000';
         break;
     // this is the deployed react application
-    case 'tosccs-client.herokuapp.com':
+    case '':
         // this is the full url of your deployed API
-        URL = 'https://tosccs.herokuapp.com'
+        URL = ''
 }
 
 export default URL;

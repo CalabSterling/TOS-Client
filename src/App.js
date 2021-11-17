@@ -1,23 +1,23 @@
 import React from 'react';
 import './App.css';
 import Auth from './Auth/Auth';
-//import styled from 'styled-components';
+import styled from 'styled-components';
 import Sitebar from './Components/Navbar';
 
 
-// const SiteContainer = styled.div`
-//   font-family: 'Times New Roman';
-//   height: 100%;
-//   display: grid;
-// `;
-// const UserContainer = styled.div`
-//   padding-top: 0%;
-//   padding-right: 1%;
+const SiteContainer = styled.div`
+  font-family: 'Times New Roman';
+  height: 100%;
+  display: grid;
+`;
+const UserContainer = styled.div`
+  padding-right: 10%;
+  float: center;
 
-//   @media (max-width: 1024px) {
-//     margin: auto;
-//   }
-// `;
+  @media (max-width: 1024px) {
+    margin: auto;
+  }
+`;
 
 class App extends React.Component {
   constructor(props) {
@@ -52,11 +52,11 @@ class App extends React.Component {
   render() {
     return (
       <div >
-        <div>
-          <div>
+        <SiteContainer>
+          <UserContainer>
             {this.protectedViews()}
-          </div>
-        </div>
+          </UserContainer>
+        </SiteContainer>
       </div>
     );
   }
